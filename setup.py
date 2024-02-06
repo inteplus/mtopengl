@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from setuptools import setup, find_namespace_packages
-from mt.gl.version import version
+from mt.opengl.version import version
 
 setup(
     name="mtopengl",
