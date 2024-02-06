@@ -16,6 +16,6 @@ setup(
         "glm",
         "pyopengl",
         "glfw",
-        "mtbase",
+        "mtbase>=4.25",
     ],
 )
