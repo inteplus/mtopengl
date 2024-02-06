@@ -32,7 +32,6 @@ import abc
 import glm
 import numpy as np
 from OpenGL.GL import *
-from .version import version as __version__
 
 
 # ----- utilities -----
