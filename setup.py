@@ -13,7 +13,7 @@ setup(
     #     "scripts/immview",
     # ],
     install_requires=[
-        "glm",
+        "pyglm",
         "pyopengl",
         "glfw",
         "mtbase>=4.25",
