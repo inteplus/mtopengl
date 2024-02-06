@@ -278,52 +278,71 @@ class VBO(Base):
 
 
 class ShaderProgram(gl.shaders.ShaderProgram):
+    _context_level = 0
+
+    def __enter__(self):
+        """Start use of the program"""
+        if self._context_level == 0:
+            gl.glUseProgram(self)
+        self._context_level += 1
+
+    def __exit__(self, typ, val, tb):
+        """Stop use of the program"""
+        self._context_level -= 1
+        if self._context_level == 0:
+            gl.glUseProgram(0)
+
     def set_uniform(self, name: str, value):
-        loc = gl.glGetUniformLocation(self, name)
-        if isinstance(value, bool):
-            gl.glUniform1i(loc, int(value))
-        elif isinstance(
-            value, (int, np.int8, np.int16, np.int32, glm.int8, glm.int16, glm.int32)
-        ):
-            gl.glUniform1i(loc, int(value))
-        elif isinstance(value, (glm.i8vec1, glm.i16vec1, glm.ivec1)):
-            gl.glUniform1i(loc, value.x)
-        elif isinstance(
-            value, (np.uint8, np.uint16, np.uint32, glm.uint8, glm.uint16, glm.uint32)
-        ):
-            gl.glUniform1ui(loc, np.uint32(value))
-        elif isinstance(value, (glm.u8vec1, glm.u16vec1, glm.uvec1)):
-            gl.glUniform1ui(loc, value.x)
-        elif isinstance(value, (float, np.float32, glm.float32)):
-            gl.glUniform1f(loc, float(value))
-        elif isinstance(value, glm.vec1):
-            gl.glUniform1f(loc, value.x)
-        elif isinstance(value, (glm.i8vec2, glm.i16vec2, glm.ivec2)):
-            gl.glUniform2i(loc, value.x, value.y)
-        elif isinstance(value, (glm.u8vec2, glm.u16vec2, glm.uvec2)):
-            gl.glUniform2ui(loc, value.x, value.y)
-        elif isinstance(value, glm.vec2):
-            gl.glUniform2f(loc, value.x, value.y)
-        elif isinstance(value, (glm.i8vec3, glm.i16vec3, glm.ivec3)):
-            gl.glUniform3i(loc, value.x, value.y, value.z)
-        elif isinstance(value, (glm.u8vec3, glm.u16vec3, glm.uvec3)):
-            gl.glUniform3ui(loc, value.x, value.y, value.z)
-        elif isinstance(value, glm.vec3):
-            gl.glUniform3f(loc, value.x, value.y, value.z)
-        elif isinstance(value, (glm.i8vec4, glm.i16vec4, glm.ivec4)):
-            gl.glUniform4i(loc, value.x, value.y, value.z, value.w)
-        elif isinstance(value, (glm.u8vec4, glm.u16vec4, glm.uvec4)):
-            gl.glUniform4ui(loc, value.x, value.y, value.z, value.w)
-        elif isinstance(value, glm.vec4):
-            gl.glUniform4f(loc, value.x, value.y, value.z, value.w)
-        elif isinstance(value, glm.mat2):
-            gl.glUniformMatrix2fv(loc, 1, gl.GL_TRUE, np.array(value))
-        elif isinstance(value, glm.mat3):
-            gl.glUniformMatrix3fv(loc, 1, gl.GL_TRUE, np.array(value))
-        elif isinstance(value, glm.mat4):
-            gl.glUniformMatrix4fv(loc, 1, gl.GL_TRUE, np.array(value))
-        else:
-            raise NotImplementedError
+        with self:
+            loc = gl.glGetUniformLocation(self, name)
+            if isinstance(value, bool):
+                gl.glUniform1i(loc, int(value))
+            elif isinstance(
+                value,
+                (int, np.int8, np.int16, np.int32, glm.int8, glm.int16, glm.int32),
+            ):
+                gl.glUniform1i(loc, int(value))
+            elif isinstance(value, (glm.i8vec1, glm.i16vec1, glm.ivec1)):
+                gl.glUniform1i(loc, value.x)
+            elif isinstance(
+                value,
+                (np.uint8, np.uint16, np.uint32, glm.uint8, glm.uint16, glm.uint32),
+            ):
+                gl.glUniform1ui(loc, np.uint32(value))
+            elif isinstance(value, (glm.u8vec1, glm.u16vec1, glm.uvec1)):
+                gl.glUniform1ui(loc, value.x)
+            elif isinstance(value, (float, np.float32, glm.float32)):
+                gl.glUniform1f(loc, float(value))
+            elif isinstance(value, glm.vec1):
+                gl.glUniform1f(loc, value.x)
+            elif isinstance(value, (glm.i8vec2, glm.i16vec2, glm.ivec2)):
+                gl.glUniform2i(loc, value.x, value.y)
+            elif isinstance(value, (glm.u8vec2, glm.u16vec2, glm.uvec2)):
+                gl.glUniform2ui(loc, value.x, value.y)
+            elif isinstance(value, glm.vec2):
+                gl.glUniform2f(loc, value.x, value.y)
+            elif isinstance(value, (glm.i8vec3, glm.i16vec3, glm.ivec3)):
+                gl.glUniform3i(loc, value.x, value.y, value.z)
+            elif isinstance(value, (glm.u8vec3, glm.u16vec3, glm.uvec3)):
+                gl.glUniform3ui(loc, value.x, value.y, value.z)
+            elif isinstance(value, glm.vec3):
+                gl.glUniform3f(loc, value.x, value.y, value.z)
+            elif isinstance(value, (glm.i8vec4, glm.i16vec4, glm.ivec4)):
+                gl.glUniform4i(loc, value.x, value.y, value.z, value.w)
+            elif isinstance(value, (glm.u8vec4, glm.u16vec4, glm.uvec4)):
+                gl.glUniform4ui(loc, value.x, value.y, value.z, value.w)
+            elif isinstance(value, glm.vec4):
+                gl.glUniform4f(loc, value.x, value.y, value.z, value.w)
+            elif isinstance(value, glm.mat2):
+                gl.glUniformMatrix2fv(loc, 1, gl.GL_TRUE, np.array(value))
+            elif isinstance(value, glm.mat3):
+                gl.glUniformMatrix3fv(loc, 1, gl.GL_TRUE, np.array(value))
+            elif isinstance(value, glm.mat4):
+                gl.glUniformMatrix4fv(loc, 1, gl.GL_TRUE, np.array(value))
+            else:
+                raise NotImplementedError(
+                    f"Support for type {type(value)} has not yet been implemented."
+                )
 
     def set_uniform_texture_unit(self, name: str, loc: int):
         self.set_uniform(name, int(loc))
